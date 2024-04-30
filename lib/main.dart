@@ -1,20 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:travel_expenses/widgets/expenses.dart';
 
 void main() {
-  runApp(const MainApp());
-}
-
-class MainApp extends StatelessWidget {
-  const MainApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
+  runApp(
+    const MaterialApp(
       home: Scaffold(
-        body: Center(
-          child: Text('Hello World!'),
-        ),
+        body: Expenses(),
       ),
-    );
-  }
+    ),
+  );
 }
