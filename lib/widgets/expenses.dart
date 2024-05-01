@@ -21,7 +21,7 @@ class _ExpensesState extends State<Expenses> {
         title: 'Sky Diving',
         amount: 500.9,
         date: DateTime.now(),
-        category: Category.eexperience)
+        category: Category.experience)
   ];
 
   @override
