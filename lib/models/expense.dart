@@ -9,7 +9,7 @@ const uuid = Uuid();
 enum Category { food, experience, shopping, stay }
 
 const categoryIcons = {
-  Category.food: Icons.fast_forward_rounded,
+  Category.food: Icons.fastfood,
   Category.experience: Icons.snowboarding,
   Category.shopping: Icons.shopping_basket,
   Category.stay: Icons.hotel,
