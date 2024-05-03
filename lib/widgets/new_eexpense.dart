@@ -14,6 +14,7 @@ class _NewExpenseState extends State<NewExpense> {
   final _titleController = TextEditingController();
   final _amountController = TextEditingController();
   DateTime? _chosenDate;
+  Category _chosenCategory = Category.food;
 
   void dispose() {
     _titleController.dispose();
@@ -60,7 +61,14 @@ class _NewExpenseState extends State<NewExpense> {
           ],
         ),
       );
+      return;
     }
+    widget.onAddExpense(Expense(
+      title: _titleController.text,
+      amount: enteredAmount,
+      date: _chosenDate!,
+      category: _chosenCategory,
+    ));
   }
 
   @override
