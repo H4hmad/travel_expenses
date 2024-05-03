@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:travel_expenses/models/expense.dart';
 import 'package:travel_expenses/widgets/expenses_list/expenses_list.dart';
+import 'package:travel_expenses/widgets/new_eexpense.dart';
 
 class Expenses extends StatefulWidget {
   const Expenses({super.key});
@@ -24,13 +25,31 @@ class _ExpensesState extends State<Expenses> {
         category: Category.experience)
   ];
 
+  void _openAddExpenseItemOverlay() {
+    showModalBottomSheet(
+      context: context,
+      builder: (modalContext) => const NewExpense(),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text("Travel Expenses Tracker  "),
+        centerTitle: true,
+        actions: [
+          IconButton(
+            onPressed: _openAddExpenseItemOverlay,
+            icon: const Icon(Icons.add),
+          ),
+        ],
+      ),
       body: Column(
         children: [
-          const Text("Travel Expenses App!"),
+          // const Text("Travel Expenses App!"),
           const Text("Chard goes here"),
+          const SizedBox(height: 30),
           Expanded(
             child: ExpensesList(allExpenses: _myExpenses),
           ),
