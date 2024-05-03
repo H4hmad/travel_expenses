@@ -37,8 +37,6 @@ class _NewExpenseState extends State<NewExpense> {
     print(selectedDate);
   }
 
-  Category _selectedCategory = Category.food;
-
   void _submitExpense() {
     final enteredAmount = double.tryParse(_amountController.text);
     final amountIsInvalid = enteredAmount == null || enteredAmount <= 0;
@@ -49,7 +47,7 @@ class _NewExpenseState extends State<NewExpense> {
       showDialog(
         context: context,
         builder: (dialogContext) => AlertDialog(
-          title: Text("Invalid Input"),
+          title: const Text("Invalid Input"),
           content: const Text("Please enter a valid value."),
           actions: [
             TextButton(
@@ -70,6 +68,12 @@ class _NewExpenseState extends State<NewExpense> {
       category: _chosenCategory,
     ));
   }
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _chosenCategory = Category.food; // Set default category
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -115,12 +119,12 @@ class _NewExpenseState extends State<NewExpense> {
             children: [
               const Text("Expense Category"),
               const SizedBox(width: 50),
-              DropdownButton<Category>(
-                value: _selectedCategory,
+              DropdownButton(
+                value: _chosenCategory,
                 onChanged: (value) {
                   // Make the parameter nullable
                   setState(() {
-                    _selectedCategory = value!;
+                    _chosenCategory = value!;
                   });
                 },
                 items: Category.values

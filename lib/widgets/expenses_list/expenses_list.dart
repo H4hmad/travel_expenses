@@ -10,7 +10,10 @@ class ExpensesList extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView.builder(
       itemCount: allExpenses.length,
-      itemBuilder: (listContext, index) => ExpenseItem(allExpenses[index]),
+      itemBuilder: (listContext, index) => Dismissible(
+        key: ValueKey(allExpenses[index]),
+        child: ExpenseItem(allExpenses[index]),
+      ),
     );
   }
 }
