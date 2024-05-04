@@ -1,37 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:travel_expenses/widgets/expense_chart.dart';
 import 'package:travel_expenses/models/expense.dart';
 import 'package:travel_expenses/widgets/expenses_list/expenses_list.dart';
 import 'package:travel_expenses/widgets/new_eexpense.dart';
 
 class Expenses extends StatefulWidget {
-  const Expenses({super.key});
+  const Expenses();
 
   @override
-  State<Expenses> createState() => _ExpensesState();
+  State<Expenses> createState() {
+    return _Expenses();
+  }
 }
 
-class _ExpensesState extends State<Expenses> {
+class _Expenses extends State<Expenses> {
   final List<Expense> _myExpenses = [
     Expense(
-      title: 'ValentineEEE Dinner',
-      amount: 399.9,
+      title: 'Valentine Dinner',
+      amount: 250,
       date: DateTime.now(),
       category: Category.food,
     ),
     Expense(
-        title: 'Sky Diving',
-        amount: 500.9,
-        date: DateTime.now(),
-        category: Category.experience)
+      title: 'Sky Diving',
+      amount: 500.00,
+      date: DateTime.now(),
+      category: Category.experience,
+    ),
   ];
 
   void _openAddExpenseItemOverlay() {
     showModalBottomSheet(
       isScrollControlled: true,
       context: context,
-      builder: (modalContext) => NewExpense(
-        onAddExpense: _addExpense,
-      ),
+      builder: (modalContext) => NewExpense(onAddExpense: _addExpense),
+      backgroundColor: Theme.of(context).dialogTheme.backgroundColor,
     );
   }
 
@@ -41,12 +44,40 @@ class _ExpensesState extends State<Expenses> {
     });
   }
 
+  void _removeExpense(Expense expense) {
+    final expenseIndex = _myExpenses.indexOf(expense);
+    setState(() {
+      _myExpenses.remove(expense);
+    });
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: const Text('Expense Deleted'),
+      duration: const Duration(seconds: 4),
+      action: SnackBarAction(
+          label: 'Undo',
+          onPressed: () {
+            setState(() {
+              _myExpenses.insert(expenseIndex, expense);
+            });
+          }),
+    ));
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(context) {
+    Widget mainScreenContent = const Center(
+      child: Text(' No Expenses here.. Please add some'),
+    );
+
+    if (_myExpenses.isNotEmpty) {
+      mainScreenContent = ExpensesList(
+        allExpenses: _myExpenses,
+        onRemoveExpense: _removeExpense,
+      );
+    }
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Travel Expenses Tracker  "),
-        centerTitle: true,
+        title: const Text("Travel Expenses Tracker"),
         actions: [
           IconButton(
             onPressed: _openAddExpenseItemOverlay,
@@ -56,12 +87,8 @@ class _ExpensesState extends State<Expenses> {
       ),
       body: Column(
         children: [
-          // const Text("Travel Expenses App!"),
-          const Text("Chard goes here"),
-          const SizedBox(height: 30),
-          Expanded(
-            child: ExpensesList(allExpenses: _myExpenses),
-          ),
+          Chart(expenses: _myExpenses),
+          Expanded(child: mainScreenContent)
         ],
       ),
     );

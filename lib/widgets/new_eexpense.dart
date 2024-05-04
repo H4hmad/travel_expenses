@@ -3,11 +3,12 @@ import 'package:travel_expenses/models/expense.dart';
 
 class NewExpense extends StatefulWidget {
   const NewExpense({super.key, required this.onAddExpense});
-
   final void Function(Expense expense) onAddExpense;
 
   @override
-  State<NewExpense> createState() => _NewExpenseState();
+  State<NewExpense> createState() {
+    return _NewExpenseState();
+  }
 }
 
 class _NewExpenseState extends State<NewExpense> {
@@ -16,6 +17,7 @@ class _NewExpenseState extends State<NewExpense> {
   DateTime? _chosenDate;
   Category _chosenCategory = Category.food;
 
+  @override
   void dispose() {
     _titleController.dispose();
     _amountController.dispose();
@@ -33,32 +35,28 @@ class _NewExpenseState extends State<NewExpense> {
     setState(() {
       _chosenDate = selectedDate;
     });
-
-    print(selectedDate);
   }
 
   void _submitExpense() {
     final enteredAmount = double.tryParse(_amountController.text);
     final amountIsInvalid = enteredAmount == null || enteredAmount <= 0;
-
     if (_titleController.text.trim().isEmpty ||
         amountIsInvalid ||
         _chosenDate == null) {
       showDialog(
-        context: context,
-        builder: (dialogContext) => AlertDialog(
-          title: const Text("Invalid Input"),
-          content: const Text("Please enter a valid value."),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(dialogContext);
-              },
-              child: const Text("OKAY"),
-            )
-          ],
-        ),
-      );
+          context: context,
+          builder: (dialogContext) => AlertDialog(
+                title: const Text('Invalid Input'),
+                content: const Text(
+                    'Please ensure you have entered a Title, Amount, Date, and Category'),
+                actions: [
+                  TextButton(
+                      onPressed: () {
+                        Navigator.pop(dialogContext);
+                      },
+                      child: const Text('Okay'))
+                ],
+              ));
       return;
     }
     widget.onAddExpense(Expense(
@@ -67,25 +65,22 @@ class _NewExpenseState extends State<NewExpense> {
       date: _chosenDate!,
       category: _chosenCategory,
     ));
+    Navigator.pop(
+        context); //1. added this to close the modal after adding the expense
   }
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _chosenCategory = Category.food; // Set default category
-  // }
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.fromLTRB(20, 50, 20, 20),
       child: Column(
         children: [
           TextField(
             controller: _titleController,
             maxLength: 45,
-            decoration: const InputDecoration(
-              label: Text("Title"),
+            decoration: InputDecoration(
+              label: Text('Title',
+                  style: DialogTheme.of(context).contentTextStyle),
             ),
           ),
           Row(
@@ -93,58 +88,71 @@ class _NewExpenseState extends State<NewExpense> {
               Expanded(
                 child: TextField(
                   controller: _amountController,
-                  maxLength: 45,
-                  decoration: const InputDecoration(
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
                     prefixText: '\$',
-                    label: Text("Amount"),
+                    label: Text('Amount',
+                        style: DialogTheme.of(context).contentTextStyle),
                   ),
                 ),
               ),
-              const SizedBox(height: 150, width: 50),
+              const SizedBox(
+                width: 20,
+              ),
               Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(_chosenDate == null
-                      ? 'Select Date'
-                      : formatter.format(_chosenDate!)),
+                  Text(
+                      _chosenDate == null
+                          ? 'Select Date'
+                          : formatter.format(_chosenDate!),
+                      style: DialogTheme.of(context)
+                          .contentTextStyle), //If you print the chosenDate without the format, it actually works, unsure why it wasn't showing up when we tried during the recording
                   IconButton(
-                    onPressed: _openDatePicker,
-                    icon: const Icon(Icons.calendar_month),
-                  )
+                      onPressed: _openDatePicker,
+                      icon: const Icon(Icons.calendar_month))
                 ],
               )
             ],
           ),
+          const SizedBox(
+            height: 30,
+          ),
           Row(
-            // mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text("Expense Category"),
-              const SizedBox(width: 50),
-              DropdownButton(
-                value: _chosenCategory,
-                onChanged: (value) {
-                  // Make the parameter nullable
-                  setState(() {
-                    _chosenCategory = value!;
-                  });
-                },
-                items: Category.values
-                    .map(
-                      (category) => DropdownMenuItem(
-                        value: category,
-                        child: Text(category.name.toUpperCase()),
-                      ),
-                    )
-                    .toList(),
+              Text("Expense Category",
+                  style: DialogTheme.of(context).contentTextStyle),
+              const SizedBox(
+                width: 30,
               ),
+              DropdownButton(
+                  value: _chosenCategory,
+                  items: Category.values
+                      .map((category) => DropdownMenuItem(
+                          value: category,
+                          child: Text(category.name.toUpperCase())))
+                      .toList(),
+                  style: DialogTheme.of(context).contentTextStyle,
+                  onChanged: (value) {
+                    if (value == null) return;
+                    setState(() {
+                      _chosenCategory = value;
+                    });
+                  }),
             ],
+          ),
+          const SizedBox(
+            height: 30,
           ),
           Row(
             children: [
               ElevatedButton(
-                onPressed: () {
-                  _submitExpense();
-                },
+                onPressed: _submitExpense,
                 child: const Text('Save Expense'),
+              ),
+              const SizedBox(
+                width: 20,
               ),
               ElevatedButton(
                 onPressed: () {
@@ -153,7 +161,7 @@ class _NewExpenseState extends State<NewExpense> {
                 child: const Text('Cancel'),
               ),
             ],
-          ),
+          )
         ],
       ),
     );
